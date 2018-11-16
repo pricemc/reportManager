@@ -9,6 +9,10 @@ module.exports = {
       // SSH key path, default to $HOME/.ssh
       //key: "/path/to/some.pem",
       // SSH user
+      env: {
+        "NODE_ENV": "development",
+        "PORT": 5000
+      },
       user: "allo",
       // SSH host
       host: ["142.93.122.189"],
