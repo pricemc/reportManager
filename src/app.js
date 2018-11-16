@@ -29,6 +29,12 @@
                 templateUrl: 'views/register/register.view.html',
                 controllerAs: 'vm'
             })
+            .when('/profile', {
+                name: 'Profile',
+                controller: 'ProfileController',
+                templateUrl: 'views/profile/profile.view.html',
+                controllerAs: 'vm'
+            })
             .when('/404', {
                 name: '404',
                 templateUrl: 'views/404.view.html'

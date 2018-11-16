@@ -15,6 +15,7 @@
         service.Create = Create;
         service.Update = Update;
         service.Delete = Delete;
+        service.GetCurrentUser = GetCurrentUser;
 
         return service;
 
@@ -30,16 +31,12 @@
             return $http.get('/users/' + username).then(handleSuccess).catch(handleError('Error getting user by username'));
         }
 
-        function Create(user) {
-            return $http.post('/register', user).then(handleSuccess).catch(handleError('Error creating user'));
+        function GetCurrentUser(config) {
+            return $http.get('/api/user/', config).then(handleSuccess).catch(handleError('Error creating post'));
         }
 
-        function Update(user) {
-            return $http.put('/users/' + user.id, user).then(handleSuccess).catch(handleError('Error updating user'));
-        }
-
-        function Delete(id) {
-            return $http.delete('/users/' + id).then(handleSuccess).catch(handleError('Error deleting user'));
+        function UpdateCurrentUser(config) {
+            return $http.post('/api/user/', userProfile, config).then(handleSuccess).catch(handleError('Error creating post'));
         }
 
         // private functions

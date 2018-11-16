@@ -1,12 +1,12 @@
-﻿(function () {
+(function () {
     'use strict';
 
     angular
         .module('app')
-        .controller('HomeController', HomeController);
+        .controller('ProfileController', ProfileController);
 
-    HomeController.$inject = ['UserService', 'PostService', 'DomainService', 'FlashService', '$rootScope', '$interval'];
-    function HomeController(UserService, PostService, DomainService, FlashService, $rootScope, $interval) {
+    ProfileController.$inject = ['UserService', 'PostService', 'DomainService', 'FlashService', '$rootScope', '$interval'];
+    function ProfileController(UserService, PostService, DomainService, FlashService, $rootScope, $interval) {
         var vm = this;
 
         vm.user;
@@ -39,8 +39,6 @@
         function initController() {
             vm.config.headers.Authorization = 'JWT ' + $rootScope.globals.currentUser.authdata;
             loadCurrentUser();
-            loadAllPosts();
-            $interval(loadAllPosts, 5000);
             // loadAllUsers();
             // loadAllDomains();
             // $interval(loadAllDomains, 5000);

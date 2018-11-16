@@ -8,35 +8,12 @@ require('../../config/passport')(passport);
 
 const mongoose = require('mongoose');
 
-/* GET ALL POSTS */
+/* GET CURRENT USER */
 router.get('/', (req, res, next) => {
   const token = getToken(req.headers);
   if (token) {
-    Post.find()
-    .populate('author')
-    .populate({
-      path: 'children',
-      populate: { path: 'author'}
-  })
-      .exec((err, products) => {
-        if (err) return next(err);
-        console.log(products);
-        res.json(products);
-      })
+    return res.json({success: true, message: req.user.userProfile});
 
-  } else {
-    return res.status(403).send({ success: false, message: 'Unauthorized.' });
-  }
-});
-
-/* GET SINGLE POST BY ID */
-router.get('/:id', (req, res, next) => {
-  const token = getToken(req.headers);
-  if (token) {
-    Post.findById(req.params.id, (err, post) => {
-      if (err) return next(err);
-      res.json({ success: true, message: post });
-    });
   } else {
     return res.status(403).send({ success: false, message: 'Unauthorized.' });
   }

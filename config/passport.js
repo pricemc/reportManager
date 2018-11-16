@@ -1,5 +1,6 @@
 var JwtStrategy = require('passport-jwt').Strategy,
-    ExtractJwt = require('passport-jwt').ExtractJwt;
+    ExtractJwt = require('passport-jwt').ExtractJwt,
+    mongoose = require('mongoose');
 
 // load up the user model
 var User = require('../models/User');
@@ -10,12 +11,12 @@ module.exports = function (passport) {
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
     opts.secretOrKey = settings.tokenSecret;
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-        User.findOne({ id: jwt_payload.id }).populate('userProfile').exec(function (err, user) {
+        User.findById(mongoose.Types.ObjectId(jwt_payload._id)).populate('userProfile').exec(function (err, user) {
             if (err) {
                 return done(err, false);
             }
             if (user) {
-                done(null, user.userProfile);
+                done(null, user);
             } else {
                 done(null, false);
             }

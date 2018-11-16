@@ -6,9 +6,11 @@ const api = express.Router();
 const announcementRouter = require('./api.js/announcement.js');
 const postRouter = require('./api.js/post.js');
 const auth = require('./auth.js');
+const auth = require('./api.js/user.js');
 
 api.use('/announcement', passport.authenticate('jwt', { session: false }), announcementRouter);
 api.use('/post', passport.authenticate('jwt', { session: false }), postRouter);
+api.use('/user', passport.authenticate('jwt', { session: false }), userRouter);
 
 api.use('/auth', auth);
 

@@ -42,7 +42,6 @@ router.post('/login', (req, res) => {
     username: req.body.username
   }, (err, user) => {
     if (err) throw err;
-
     if (!user) {
       res.status(401).send({ success: false, message: 'Authentication failed. User not found.' });
     } else {

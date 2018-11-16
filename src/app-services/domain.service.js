@@ -15,6 +15,8 @@
 
         return service;
 
+        
+
         function GetAll() {
             return $http.get('/domains').then(handleSuccess, handleError('Error getting all domains'));
         }
