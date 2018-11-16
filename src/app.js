@@ -46,7 +46,15 @@
                 $location.path('/login');
             }
         });
-        
+        $http.get('/build')
+            .then(handleSuccess)
+            .catch(handleError);
+        function handleSuccess(response) {
+            console.log(response);
+        }
+        function handleError(err) {
+            console.error(err);
+        }
     }
 
 })();

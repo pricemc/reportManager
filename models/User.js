@@ -12,7 +12,11 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  userProfile: { 
+    type: Schema.ObjectId, 
+    ref: 'UserProfile' 
+  },
 });
 
 UserSchema.pre('save', function save(next) {

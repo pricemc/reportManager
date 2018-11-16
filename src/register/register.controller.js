@@ -15,16 +15,16 @@
             // reset login status
             AuthenticationService.ClearCredentials();
         })();
-        
+
         function register() {
             vm.dataLoading = true;
             AuthenticationService.Register(vm.username, vm.password, function (response) {
-                if (response.success) {
+                if (response.data.success) {
                     AuthenticationService.SetCredentials(vm.username, response.data.token);
                     FlashService.Success('Registration successful', true);
                     $location.path('/');
                 } else {
-                    FlashService.Error(response.message);
+                    FlashService.Error(response);
                     vm.dataLoading = false;
                 }
             });

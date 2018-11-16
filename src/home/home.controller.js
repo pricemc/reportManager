@@ -5,8 +5,8 @@
         .module('app')
         .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['DomainService', 'UserService', '$rootScope', '$interval'];
-    function HomeController(DomainService, UserService, $rootScope, $interval) {
+    HomeController.$inject = ['UserService', '$rootScope', '$interval'];
+    function HomeController(UserService, $rootScope, $interval) {
         var vm = this;
 
         vm.user = null;
@@ -36,16 +36,13 @@
 
         function initController() {
             loadCurrentUser();
-            loadAllUsers();
-            loadAllDomains();
-            $interval(loadAllDomains, 5000);
+            // loadAllUsers();
+            // loadAllDomains();
+            // $interval(loadAllDomains, 5000);
         }
 
         function loadCurrentUser() {
-            UserService.GetByUsername($rootScope.globals.currentUser.username)
-                .then(function (user) {
-                    vm.user = user;
-                });
+            vm.user = $rootScope.globals.currentUser.username;
         }
 
         function loadAllUsers() {

@@ -6,12 +6,14 @@ const settings = require('../config/settings');
 
 const router = express.Router();
 const User = require('../models/User');
+const UserProfile = require('../models/UserProfile');
 
 router.post('/register', (req, res) => {
+  console.log(req);
   if (!req.body.username || !req.body.password) {
     res.json({ success: false, message: 'Please pass username and password.' });
   } else {
-    const newUser = new User({
+    var newUser = new User({
       username: req.body.username,
       password: req.body.password
     });
@@ -20,8 +22,17 @@ router.post('/register', (req, res) => {
       if (err) {
         return res.json({ success: false, message: 'Username already exists.' });
       }
+
+      const newProfile = new UserProfile({
+        username: req.body.username,
+        name: req.body.username,
+      })
+
+      newProfile.save();
+      newUser.userProfile = newProfile._id;
+      newUser.save();
       const token = jwt.sign(newUser.toJSON(), settings.tokenSecret, { expiresIn: settings.tokenLife });
-      res.json({ success: true, message: 'Successful created new user.', token: `JWT ${token}` });
+      res.json({ success: true, message: 'Successful created new user.', token: token });
     });
   }
 });
