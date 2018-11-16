@@ -12,10 +12,8 @@
         service.GetAll = GetAll;
         service.GetById = GetById;
         service.GetByUsername = GetByUsername;
-        service.Create = Create;
-        service.Update = Update;
-        service.Delete = Delete;
         service.GetCurrentUser = GetCurrentUser;
+        service.UpdateCurrentUser = UpdateCurrentUser;
 
         return service;
 
@@ -35,7 +33,7 @@
             return $http.get('/api/user/', config).then(handleSuccess).catch(handleError('Error creating post'));
         }
 
-        function UpdateCurrentUser(config) {
+        function UpdateCurrentUser(config, userProfile) {
             return $http.post('/api/user/', userProfile, config).then(handleSuccess).catch(handleError('Error creating post'));
         }
 

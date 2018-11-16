@@ -4,6 +4,7 @@ const router = express.Router();
 const passport = require('passport');
 const Post = require('../../models/Post');
 const Comment = require('../../models/Comment');
+const UserProfile = require('../../models/UserProfile');
 require('../../config/passport')(passport);
 
 const mongoose = require('mongoose');
@@ -19,17 +20,21 @@ router.get('/', (req, res, next) => {
   }
 });
 
-/* SAVE POST */
+/* SAVE User */
 router.post('/', (req, res, next) => {
   const token = getToken(req.headers);
-  console.log(token);
   if (token) {
-    req.body.author = mongoose.Types.ObjectId(req.user.userProfile._id);
-    Post.create(req.body, (err, post) => {
-      console.log(err);
-      if (err) return next(err);
-      res.json({ success: true, message: post });
-    });
+    UserProfile.findById(mongoose.Types.ObjectId(req.user.userProfile._id), (err, user) => {
+        console.log(err);
+        console.log(user);
+        if (err) return next(err);
+        user.bio = req.body.bio;
+        user.name = req.body.name;
+        user.save((err) => {
+            console.log(err);
+            return res.json({success: true, message: user});
+        });
+    })
   } else {
     return res.status(403).send({ success: false, message: 'Unauthorized.' });
   }

@@ -33,12 +33,13 @@
 
         }
 
-        function SetCredentials(username, token) {
+        function SetCredentials(username, token, userProfile) {
 
             $rootScope.globals = {
                 currentUser: {
                     username: username,
-                    authdata: token
+                    authdata: token,
+                    userProfile: userProfile
                 }
             };
             // set default auth header for http requests

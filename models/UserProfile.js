@@ -13,7 +13,7 @@ const UserProfileSchema = new Schema({
     type: String,
     required: true
   },
-  email: {
+  bio: {
     type: String
   },
   role: {

@@ -20,7 +20,7 @@
             vm.dataLoading = true;
             AuthenticationService.Register(vm.username, vm.password, function (response) {
                 if (response.data.success) {
-                    AuthenticationService.SetCredentials(vm.username, response.data.token);
+                    AuthenticationService.SetCredentials(vm.username, response.data.token, response.data.userProfile);
                     FlashService.Success('Registration successful', true);
                     $location.path('/');
                 } else {

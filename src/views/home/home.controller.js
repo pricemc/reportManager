@@ -18,32 +18,16 @@
         };
         vm.Create = Create;
         vm.Comment = Comment;
+        vm.loadAllPosts = loadAllPosts;
 
         initController();
-
-        function reset() {
-            DomainService.Create('deleteme', '3000')
-                .then(function () {
-                    loadAllDomains();
-                });
-            DomainService.Create('clickMeFirstThenDeleteMe', '8080')
-                .then(function () {
-                    loadAllDomains();
-                });
-            DomainService.Create('test', '3000')
-                .then(function () {
-                    loadAllDomains();
-                });
-        }
 
         function initController() {
             vm.config.headers.Authorization = 'JWT ' + $rootScope.globals.currentUser.authdata;
             loadCurrentUser();
             loadAllPosts();
-            $interval(loadAllPosts, 5000);
-            // loadAllUsers();
-            // loadAllDomains();
-            // $interval(loadAllDomains, 5000);
+            $interval(loadAllPosts, 1000);
+
         }
 
         function loadCurrentUser() {
@@ -56,6 +40,7 @@
                     console.log(posts);
                     vm.allPosts = posts;
                 })
+            
         }
 
         function Create() {
@@ -65,7 +50,8 @@
                     FlashService.Success('Post successful', false);
                     $('#newPostModal').modal('hide');
                     vm.dataLoading = false;
-                    //vm.loadAllPosts().then((res)=>console.log(res)).catch((err)=>console.log(err));
+                    vm.loadAllPosts().then((res)=>console.log(res)).catch((err)=>console.log(err));
+                    vm.message = "";
                 } else {
                     FlashService.Error(response.data.message);
                     vm.dataLoading = false;
@@ -89,7 +75,7 @@
                     $('#newCommentModal').modal('hide');
                     vm.dataLoading = false;
                     vm.message = "";
-                    //vm.loadAllPosts().then((res)=>console.log(res)).catch((err)=>console.log(err));
+                    vm.loadAllPosts().then((res)=>console.log(res)).catch((err)=>console.log(err));
                 } else {
                     FlashService.Error(response.data.message);
                     vm.dataLoading = false;
@@ -99,33 +85,6 @@
             });
         }
 
-        function createDomain() {
-            DomainService.Create(vm.subdomain, vm.port)
-                .then(function () {
-                    loadAllDomains();
-                });
-        }
-
-        function deleteUser(id) {
-            UserService.Delete(id)
-                .then(function () {
-                    loadAllUsers();
-                });
-        }
-        function loadAllDomains() {
-            DomainService.GetAll()
-                .then(function (domains) {
-                    console.log(domains);
-                    vm.domains = domains.message;
-                });
-        }
-
-        function deleteDomain(id) {
-            DomainService.Delete(id)
-                .then(function () {
-                    loadAllDomains();
-                });
-        }
     }
 
 })();
