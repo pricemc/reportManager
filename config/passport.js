@@ -10,12 +10,12 @@ module.exports = function (passport) {
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
     opts.secretOrKey = settings.tokenSecret;
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-        User.findOne({ id: jwt_payload.id }, function (err, user) {
+        User.findOne({ id: jwt_payload.id }).populate('userProfile').exec(function (err, user) {
             if (err) {
                 return done(err, false);
             }
             if (user) {
-                done(null, user);
+                done(null, user.userProfile);
             } else {
                 done(null, false);
             }

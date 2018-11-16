@@ -21,14 +21,17 @@
             $http.post('/api/auth/login', { username: username, password: password })
                 .then(function (response) {
                     callback(response);
+                }).catch(function (response) {
+                    callback(response);
                 });
 
         }
 
         function Register(username, password, callback) {
-            console.log(username + password);
             $http.post('/api/auth/register', { 'username': username, 'password': password })
                 .then(function (response) {
+                    callback(response);
+                }).catch(function (response) {
                     callback(response);
                 });
 
@@ -47,8 +50,8 @@
             // set default auth header for http requests
             //$http.defaults.headers.common.Authorization = 'JWT ' + authdata;
             $http.defaults.headers.common['Authorization'] = 'JWT ' + $rootScope.globals.currentUser.authdata;
-
-            console.log("everywhere");
+            
+            console.log($http.defaults.headers.common['Authorization']);
 
             // store user details in globals cookie that keeps user logged in for 1 week (or until they logout)
             var cookieExp = new Date();

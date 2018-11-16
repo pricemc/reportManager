@@ -3,34 +3,32 @@
 
     angular
         .module('app')
-        .controller('RegisterController', RegisterController);
+        .controller('LoginController', LoginController);
 
-    RegisterController.$inject = ['AuthenticationService', '$location', '$rootScope', 'FlashService'];
-    function RegisterController(AuthenticationService, $location, $rootScope, FlashService) {
+    LoginController.$inject = ['$location', 'AuthenticationService', 'FlashService'];
+    function LoginController($location, AuthenticationService, FlashService) {
         var vm = this;
 
-        vm.register = register;
+        vm.login = login;
 
         (function initController() {
             // reset login status
             AuthenticationService.ClearCredentials();
         })();
 
-        function register() {
+        function login() {
             vm.dataLoading = true;
-            AuthenticationService.Register(vm.username, vm.password, function (response) {
+            AuthenticationService.Login(vm.username, vm.password, function (response) {
+                console.log(response.data);
                 if (response.data.success) {
                     AuthenticationService.SetCredentials(vm.username, response.data.token);
-                    FlashService.Success('Registration successful', true);
                     $location.path('/');
                 } else {
-                    FlashService.Error(response);
+                    FlashService.Error(response.data.message);
                     vm.dataLoading = false;
                 }
             });
-        }
-
-
+        };
     }
 
 })();

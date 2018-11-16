@@ -20,6 +20,9 @@ app.use(logger.expressLogger);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ 'extended': 'false' }));
 app.use('/api', api);
+app.get('/build', function(req, res) {
+  res.json({build: git_rev,time: git_time});
+})
 app.use(express.static(path.join(__dirname, 'src')));
 
 // catch 404 and forward to error handler
@@ -39,15 +42,7 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500).json(err);
 });
 
-require('child_process').exec('git rev-parse --short HEAD', function (err, stdout) {
-  git_rev = stdout;
-  logger.log('Last commit hash on this branch is: ', stdout);
-});
 
-require('child_process').exec('git log -1 --format=%cd --date=local', function (err, stdout) {
-  git_time = stdout;
-  logger.log('Last commit on this branch was: ', stdout);
-});
 
 var path = require('path');
 var appDir = path.dirname(require.main.filename);
@@ -59,5 +54,14 @@ var appRootFolder = function (dir, level) {
   var rootFolder = arr.join('\\');
   return rootFolder;
 }
+require('child_process').exec('git rev-parse --short HEAD', function (err, stdout) {
+  git_rev = stdout.toString().replace(/\n|\r/g, "");
+  logger.info('Last commit hash on this branch is: %s', git_rev);
+});
+
+require('child_process').exec('git log -1 --format=%cd --date=local', function (err, stdout) {
+  git_time = stdout.toString().replace(/\n|\r/g, "");
+  logger.info('Last commit on this branch was: %s', git_time);
+});
 
 module.exports = app;

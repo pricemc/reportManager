@@ -2,74 +2,114 @@ const express = require('express');
 
 const router = express.Router();
 const passport = require('passport');
-const Announcement = require('../../models/Announcement.js');
+const Post = require('../../models/Post');
+const Comment = require('../../models/Comment');
 require('../../config/passport')(passport);
 
-/* GET ALL ANNOUNCEMENTS */
-router.get('/', (req, res) => {
+const mongoose = require('mongoose');
+
+/* GET ALL POSTS */
+router.get('/', (req, res, next) => {
   const token = getToken(req.headers);
-  console.log(req.user);
   if (token) {
-    Announcement.find((err, products) => {
-      if (err) return next(err);
-      res.json(products);
-    });
+    Post.find()
+    .populate('author')
+    .populate({
+      path: 'children',
+      populate: { path: 'author'}
+  })
+      .exec((err, products) => {
+        if (err) return next(err);
+        console.log(products);
+        res.json(products);
+      })
+
   } else {
-    return res.status(403).send({ success: false, msg: 'Unauthorized.' });
+    return res.status(403).send({ success: false, message: 'Unauthorized.' });
   }
 });
 
-/* GET SINGLE ANNOUNCEMENT BY ID */
-router.get('/:id', (req, res) => {
+/* GET SINGLE POST BY ID */
+router.get('/:id', (req, res, next) => {
   const token = getToken(req.headers);
   if (token) {
-    Announcement.findById(req.params.id, (err, post) => {
+    Post.findById(req.params.id, (err, post) => {
       if (err) return next(err);
-      res.json(post);
+      res.json({ success: true, message: post });
     });
   } else {
-    return res.status(403).send({ success: false, msg: 'Unauthorized.' });
+    return res.status(403).send({ success: false, message: 'Unauthorized.' });
   }
 });
 
-/* SAVE ANNOUNCEMENT */
-router.post('/', (req, res) => {
+/* SAVE POST */
+router.post('/', (req, res, next) => {
   const token = getToken(req.headers);
   console.log(token);
   if (token) {
-    req.body.author = req.user._id;
-    Announcement.create(req.body, (err, post) => {
+    req.body.author = mongoose.Types.ObjectId(req.user._id);
+    Post.create(req.body, (err, post) => {
+      console.log(err);
       if (err) return next(err);
-      res.json(post);
+      res.json({ success: true, message: post });
     });
   } else {
-    return res.status(403).send({ success: false, msg: 'Unauthorized.' });
+    return res.status(403).send({ success: false, message: 'Unauthorized.' });
   }
 });
 
-/* UPDATE ANNOUNCEMENT */
-router.put('/:id', (req, res) => {
+/* SAVE Comment */
+router.post('/comment', (req, res, next) => {
   const token = getToken(req.headers);
+  console.log(req.body);
+  if(!req.body.comment || !req.body.post) return res.status(500).send({ success: false, message: 'Unauthorized.' });
   if (token) {
-    Announcement.findByIdAndUpdate(req.params.id, req.body, (err, post) => {
-      if (err) return next(err);
-      res.json(post);
-    });
+    req.body.comment.author = mongoose.Types.ObjectId(req.user._id);
+    Post.findById(mongoose.Types.ObjectId(req.body.post), function (err, post) {
+      console.log("Post: " + post);
+      if (err || !post) return next(err || { success: false, message: 'No Post Found.' });
+      var newPost = new Comment({
+        author: mongoose.Types.ObjectId(req.user._id),
+        message: req.body.comment
+      });
+      newPost.save(function (err) {
+        if (err) return next(err);
+        
+        post.children.push(newPost._id);
+        post.save(function (err) {
+          if (err) return next(err);
+        })
+      })
+      res.json({ success: true, message: post });
+    })
   } else {
-    return res.status(403).send({ success: false, msg: 'Unauthorized.' });
+    return res.status(403).send({ success: false, message: 'Unauthorized.' });
   }
 });
 
-/* DELETE ANNOUNCEMENT */
-router.delete('/:id', (req, res) => {
+/* UPDATE POST */
+router.put('/:id', (req, res, next) => {
   const token = getToken(req.headers);
   if (token) {
-    Announcement.findByIdAndRemove(req.params.id, req.body, (err, post) => {
+    Post.findByIdAndUpdate(req.params.id, req.body, (err, post) => {
       if (err) return next(err);
-      res.json(post);
+      res.json({ success: true, message: post });
     });
   } else {
-    return res.status(403).send({ success: false, msg: 'Unauthorized.' });
+    return res.status(403).send({ success: false, message: 'Unauthorized.' });
+  }
+});
+
+/* DELETE POST */
+router.delete('/:id', (req, res, next) => {
+  const token = getToken(req.headers);
+  if (token) {
+    Post.findByIdAndRemove(req.params.id, req.body, (err, post) => {
+      if (err) return next(err);
+      res.json({ success: true, message: post });
+    });
+  } else {
+    return res.status(403).send({ success: false, message: 'Unauthorized.' });
   }
 });
 
