@@ -71,7 +71,7 @@
                 <form name="form" ng-submit="vm.Comment()" role="form">
                     <div class="form-group" ng-class="{ 'has-error': form.message.$dirty && form.message.$error.required }">
                         <label for="message">Message</label>
-                        <textarea type="submit" ng-keyup="$event.keyCode == 13 && vm.Comment()" type="text" name="message" id="message" class="form-control" ng-model="vm.message"
+                        <textarea type="text" name="message" id="message" class="form-control" ng-model="vm.message"
                             required></textarea>
                         <span ng-show="form.message.$dirty && form.message.$error.required" class="help-block">Message
                             is required</span>
